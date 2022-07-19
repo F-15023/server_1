@@ -27,7 +27,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>Main</mainClass>
                                 </transformer>
                             </transformers>
@@ -49,7 +50,16 @@
             <artifactId>netty-all</artifactId>
             <version>4.1.77.Final</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20190722</version>
+        </dependency>
+        <dependency>
+            <groupId>com.graphhopper</groupId>
+            <artifactId>graphhopper-core</artifactId>
+            <version>5.3</version>
+        </dependency>
     </dependencies>
 
 </project>
