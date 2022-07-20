@@ -1,3 +1,4 @@
+package com.server.routing;
 
 import com.graphhopper.GHRequest;
 import com.graphhopper.GHResponse;
@@ -20,11 +21,11 @@ import static com.graphhopper.json.Statement.Op.MULTIPLY;
 public class RoutingExample {
     public static void main(String[] args) {
         String relDir = args.length == 1 ? args[0] : "";
-        GraphHopper hopper = createGraphHopperInstance(relDir + "core/files/andorra.osm.pbf");
+        GraphHopper hopper = createGraphHopperInstance(relDir + "/home/khayrutdinov_fr/apps/my/server_1/pbf/chelny.osm.pbf");
         routing(hopper);
         speedModeVersusFlexibleMode(hopper);
         headingAndAlternativeRoute(hopper);
-        customizableRouting(relDir + "core/files/andorra.osm.pbf");
+        customizableRouting(relDir + "/home/khayrutdinov_fr/apps/my/server_1/pbf/chelny.osm.pbf");
 
         // release resources to properly shutdown or start a new instance
         hopper.close();
@@ -34,7 +35,7 @@ public class RoutingExample {
         GraphHopper hopper = new GraphHopper();
         hopper.setOSMFile(ghLoc);
         // specify where to store graphhopper files
-        hopper.setGraphHopperLocation("target/routing-graph-cache");
+        hopper.setGraphHopperLocation("target/com.server.routing-graph-cache");
 
         // see docs/core/profiles.md to learn more about profiles
         hopper.setProfiles(new Profile("car").setVehicle("car").setWeighting("fastest").setTurnCosts(false));
@@ -117,7 +118,7 @@ public class RoutingExample {
     public static void customizableRouting(String ghLoc) {
         GraphHopper hopper = new GraphHopper();
         hopper.setOSMFile(ghLoc);
-        hopper.setGraphHopperLocation("target/routing-custom-graph-cache");
+        hopper.setGraphHopperLocation("target/com.server.routing-custom-graph-cache");
         hopper.setProfiles(new CustomProfile("car_custom").setCustomModel(new CustomModel()).setVehicle("car"));
 
         // The hybrid mode uses the "landmark algorithm" and is up to 15x faster than the flexible mode (Dijkstra).

@@ -1,17 +1,22 @@
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+package com.server.netty;
+
+import com.server.routing.RouteRequest;
+import com.server.routing.Router;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.DefaultFullHttpResponse;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.HttpResponseStatus;
-import org.json.JSONObject;
 
 import java.nio.charset.StandardCharsets;
 
-public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+public class MainHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     Channel channel;
+    Router router;
+
+    public MainHandler(Router router) {
+        this.router = router;
+    }
 
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
@@ -30,22 +35,24 @@ public class HttpRequestHandler extends SimpleChannelInboundHandler<FullHttpRequ
     protected void channelRead0(ChannelHandlerContext ctx, FullHttpRequest httpRequest) throws Exception {
         String apiMethod = httpRequest.uri();
         String contentString = httpRequest.content().toString(StandardCharsets.UTF_8);
-
-        RouteRequest routeRequest =  new RouteRequest().parseRouteRequestFromJsonStrong(contentString);
+        String responseString = getResponceString(apiMethod, contentString);
 
         DefaultFullHttpResponse response = new DefaultFullHttpResponse(httpRequest.protocolVersion(), HttpResponseStatus.OK);
-        response.content().writeBytes(responceString.getBytes(StandardCharsets.UTF_8));
+        response.content().writeBytes(responseString.getBytes(StandardCharsets.UTF_8));
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
-    private RouteRequest parseContent(String jsonContent, String apiMethod) throws Exception {
+    private String getResponceString(String apiMethod, String contentString) throws Exception {
         switch (apiMethod) {
             case "/route":
-                return new RouteRequest().parseRouteRequestFromJsonStrong(jsonContent);
+                return getRoute(contentString);
             default:
                 throw new Exception("Unknown api method! Check request!");
         }
     }
 
-
+    private String getRoute(String contentString) throws Exception {
+        RouteRequest routeRequest = new RouteRequest().parseRouteRequestFromJsonStrong(contentString);
+        return router.getRouteInWKT4326(routeRequest.getPoints());
+    }
 }
